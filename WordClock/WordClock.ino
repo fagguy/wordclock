@@ -1,6 +1,7 @@
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
 #include <NTPClient.h>
+#include "ClockDisplay.h"
 
 // WiFi credentials
 const char *ssid      = "<SSID>";
@@ -13,6 +14,8 @@ const unsigned long updateInterval  = 60 * 60 * 1000; // 1 hr
 // Create NTPClient instance
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "sg.pool.ntp.org", utcOffsetInSeconds, updateInterval);
+
+ClockDisplay display;
 
 void setup() {
   // put your setup code here, to run once:

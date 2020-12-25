@@ -1,5 +1,6 @@
 # wordclock
-Code for a 12x12 wordclock using ESP8266
+Code for a 12x12 wordclock using an ESP8266 as the controller.
+![word clock](https://i.imgur.com/EDGhuEt.jpg)
 
 ## Build instructions
 All required libraries have been added as Git submodules. To build the code:

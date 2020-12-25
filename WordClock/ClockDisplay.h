@@ -1,13 +1,13 @@
 #ifndef _CLOCKDISPLAY_H_
-#define _CLOCKDISPLAYP_H_
+#define _CLOCKDISPLAY_H_
 
-#include <Arduino.h>
+#include "FadeTransitionManager.h"
 #include <NeoPixelBrightnessBus.h>
-#include <NeoPixelAnimator.h>
+#include <unordered_set>
+#include <vector>
 
-class ClockDisplay   
-{
-private:
+class ClockDisplay {
+  private:
     // Word addresses
     const uint8_t wordIts[3]        = {132, 133, 134};
     const uint8_t wordAbout[5]      = {136, 137, 138, 139, 140};
@@ -42,11 +42,7 @@ private:
     const uint8_t symbolRaining     = 0;
 
     // Colors
-    const RgbColor magenta;
-    const RgbColor yellow;
-    const RgbColor lightGrey;
-    const RgbColor darkCyan;
-    const RgbColor black;
+    const RgbColor magenta, yellow, lightGrey, darkCyan, black;
 
     // Timings
     const uint16_t maxFadeInDelay = 1000;
@@ -55,25 +51,36 @@ private:
 
     // LED parameters
     const uint16_t PixelCount = 144; // make sure to set this to the number of pixels in your strip
-    const uint8_t PixelPin = 2;  // make sure to set this to the correct pin, ignored for Esp8266
+    const uint8_t PixelPin = 2; // make sure to set this to the correct pin, ignored for Esp8266
+    const uint8_t PercentageBrightness = 15;
 
-    NeoPixelBrightnessBus<NeoGrbFeature, Neo800KbpsMethod> strip;
+    NeoPixelBrightnessBus < NeoGrbFeature, Neo800KbpsMethod > strip;
     // For Esp8266, the Pin is omitted and it uses GPIO3 due to DMA hardware use.  
     // There are other Esp8266 alternative methods that provide more pin options, but also have
     // other side effects.
-    // for details see wiki linked here https://github.com/Makuna/NeoPixelBus/wiki/ESP8266-NeoMethods 
+    // for details see wiki linked here https://github.com/Makuna/NeoPixelBus/wiki/ESP8266-NeoMethods
 
-    NeoPixelAnimator animations; // NeoPixel animation management object
+    FadeTransitionManager transitionManager;
 
-public:
-    ClockDisplay() : 
-        strip(PixelCount, PixelPin),
-        animations(PixelCount),
-        magenta(HtmlColor(0xff00ff)),
-        yellow(HtmlColor(0xffff00)),
-        lightGrey(HtmlColor(0xcdcdcd)),
-        darkCyan(HtmlColor(0x83d7ee)),
-        black(HtmlColor(0x000000)) {
+    std::unordered_set <uint8_t> currentPixels, nextPixels;
+
+    void updateTimePixels(int hours, int minutes, bool isDay);
+    void updateWeatherPixels(String weather, bool isDay);
+    void addPixelToNextSet(uint8_t pixelIndex, const RgbColor& targetColor);
+    std::vector<uint8_t> getCharactersNotInOtherSet(std::unordered_set<uint8_t>& referenceSet, std::unordered_set<uint8_t>& otherSet);
+
+  public:
+    ClockDisplay():
+      magenta(HtmlColor(0xff00ff)),
+      yellow(HtmlColor(0xffff00)),
+      lightGrey(HtmlColor(0xcdcdcd)),
+      darkCyan(HtmlColor(0x83d7ee)),
+      black(HtmlColor(0x000000)),
+      strip(PixelCount, PixelPin),
+      transitionManager(strip) {
+
+      strip.Begin();
+      strip.SetBrightness(PercentageBrightness * 255 / 100);
     };
 
     // Updates the display to the next state and schedules the transition animations

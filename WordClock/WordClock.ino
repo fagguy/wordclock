@@ -16,6 +16,7 @@ WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "sg.pool.ntp.org", utcOffsetInSeconds, updateInterval);
 
 ClockDisplay display;
+unsigned long displayUpdatedTime;
 
 void setup() {
   // put your setup code here, to run once:
@@ -29,10 +30,22 @@ void setup() {
   Serial.println ( "Connected" );
 
   timeClient.begin();
+  updateDisplay();
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  auto epochTime = timeClient.getEpochTime();
+  if (epochTime != displayUpdatedTime && epochTime % 60 == 0) {
+    updateDisplay();
+  }
+}
+
+void updateDisplay() {
   timeClient.update();
-  timeClient.getFormattedTime();
+  auto hours = timeClient.getHours();
+  auto minutes = timeClient.getMinutes();
+
+  display.updateDisplay(hours, minutes, true, "");
+  displayUpdatedTime = timeClient.getEpochTime();
 }

@@ -79,8 +79,8 @@ class ClockDisplay {
       transitionManager(strip) {
     };
 
-    // initialize() needs to be called after Serial.Begin(). See https://github.com/Makuna/NeoPixelBus/issues/119
-    void initialize();
+    // begin() needs to be called after Serial.Begin(). See https://github.com/Makuna/NeoPixelBus/issues/119
+    void begin();
     // Updates the display to the next state and schedules the transition animations
     void updateDisplay(int hours, int minutes, bool isDay, String weather);
     // Updates the transition animations

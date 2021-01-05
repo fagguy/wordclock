@@ -1,6 +1,6 @@
 #include "ClockDisplay.h"
 
-void ClockDisplay::initialize() {
+void ClockDisplay::begin() {
   strip.Begin();
   strip.SetBrightness(15 * 255 / 100); // values from, 0 to 255
 }

@@ -52,7 +52,6 @@ class ClockDisplay {
     // LED parameters
     const uint16_t PixelCount = 144; // make sure to set this to the number of pixels in your strip
     const uint8_t PixelPin = 2; // make sure to set this to the correct pin, ignored for Esp8266
-    const uint8_t PercentageBrightness = 15;
 
     NeoPixelBrightnessBus < NeoGrbFeature, Neo800KbpsMethod > strip;
     // For Esp8266, the Pin is omitted and it uses GPIO3 due to DMA hardware use.  
@@ -78,11 +77,10 @@ class ClockDisplay {
       black(HtmlColor(0x000000)),
       strip(PixelCount, PixelPin),
       transitionManager(strip) {
-
-      strip.Begin();
-      strip.SetBrightness(PercentageBrightness * 255 / 100);
     };
 
+    // initialize() needs to be called after Serial.Begin(). See https://github.com/Makuna/NeoPixelBus/issues/119
+    void initialize();
     // Updates the display to the next state and schedules the transition animations
     void updateDisplay(int hours, int minutes, bool isDay, String weather);
     // Updates the transition animations

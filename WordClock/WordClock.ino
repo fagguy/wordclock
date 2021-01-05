@@ -44,6 +44,8 @@ void setup() {
   Serial.println ( "Connected" );
 
   timeClient.begin();
+  display.initialize();
+  
   updateDisplay();
 }
 
